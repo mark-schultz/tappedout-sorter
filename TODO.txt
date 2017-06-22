@@ -1,0 +1,7 @@
+Planned Features:
+
+Support scraping deck from EDHREC average deck
+
+Use scryfall enchanced search
+
+Add "Owned Cards".txt, make addition to the cum. price be 0 for cards in it, add indication to table they're owned, sort w/ price as 0.
