@@ -6,7 +6,7 @@ import pprint
 import datetime
 from beautifultable import BeautifulTable
 
-SCRYFALL_URL = "https://api.scryfall.com"
+SCRYFALL_URL_PARTS = ["https://api.scryfall.com/cards/search?q=++!\"","\"&order=usd"]
 TAPPEDOUT_URL = "http://tappedout.net/mtg-decks/dralnu-combocontrol-2/?fmt=txt"
 RATE_LIMIT = .05
 DEFAUlT_PRICE = 1000
@@ -62,12 +62,17 @@ def read_cache():
 
     Based on parem MAX_AGE
     """
-    with open(CACHE, 'r') as f:
-        data = f.readlines()[0]
-        jsonlist = data.replace("}{", "};{").split(';')
-        cardslist = [string_to_card(line) for line in jsonlist]
-    fresh_cards = [card for card in cardslist if age(card) <= MAX_AGE]
-    return fresh_cards
+    try:
+        with open(CACHE, 'r') as f:
+            data = f.readlines()[0]
+            jsonlist = data.replace("}{", "};{").split(';')
+            cardslist = [string_to_card(line) for line in jsonlist]
+            fresh_cards = [card for card in cardslist if age(card) <= MAX_AGE]
+            return fresh_cards
+    except (FileNotFoundError, IndexError):
+        with open(CACHE, 'w') as f:
+            f.write('')
+        return []
 
 
 def update_cache(ls):
@@ -77,10 +82,13 @@ def update_cache(ls):
     if ls == [] or ls is None:
         raise ValueError("Can't update the Cache with an empty decklist")
     else:
-        with open(CACHE, 'r') as f:
-            scached_cards = f.readlines()[0]
-        jsonlist = scached_cards.replace("}{", "};{").split(';')
-        cached_cards = [string_to_card(line) for line in jsonlist]
+        try:
+            with open(CACHE, 'r') as f:
+                scached_cards = f.readlines()[0]
+                jsonlist = scached_cards.replace("}{", "};{").split(';')
+                cached_cards = [string_to_card(line) for line in jsonlist]
+        except IndexError:
+            cached_cards = []
         for card in ls:
             scard = card_to_string(card)
             updated = False
@@ -108,9 +116,8 @@ def age(card):
 
 def find_card_price(dct, iterator=None):
     name = dct['Name']
-    query = SCRYFALL_URL + "/cards/named?exact=" + \
-        name.replace(" ", "+").lower()
-    data = requests.get(query).json()
+    query = SCRYFALL_URL_PARTS[0] + name.replace(" ", "+").lower() + SCRYFALL_URL_PARTS[1]
+    data = requests.get(query).json()['data'][0]
     try:
         return float(data['usd'])
     except KeyError:
