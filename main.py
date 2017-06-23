@@ -11,7 +11,7 @@ TAPPEDOUT_URL = "http://tappedout.net/mtg-decks/dralnu-combocontrol-2/?fmt=txt"
 RATE_LIMIT = .05
 DEFAUlT_PRICE = 1000
 MAX_AGE = 3
-CACHE = 'cache.txt'
+CACHE = 'cache.json'
 
 
 def get_tappedout_txt(link):
