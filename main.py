@@ -166,6 +166,7 @@ def make_table(sorted_ls):
 
 link = "http://tappedout.net/mtg-decks/02-05-17-GDa-the-gitrog-monster/"
 link2 = "http://tappedout.net/mtg-decks/dralnu-combocontrol-2/"
+link3 = 'http://tappedout.net/mtg-decks/tana-and-tymna-kiki-stax/'
 
 def main(link):
     cardslist = get_tappedout_txt(link)
